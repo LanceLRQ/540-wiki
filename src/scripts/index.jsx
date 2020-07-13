@@ -1,11 +1,14 @@
+import 'fontsource-roboto';
 import 'styles/index.scss';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { RootApp } from './root';
+
 const render = () => {
   ReactDOM.render(
-    <div>Hello World!</div>,
+    <RootApp />,
     document.getElementById('root')
   );
 };

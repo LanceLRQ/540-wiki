@@ -21,7 +21,6 @@
     "defaults",
     "not IE 11",
     "not IE_Mob 11",
-    "maintained node versions",
     "chrome >= 43",
     "safari >= 7",
     "firefox >= 48"
@@ -35,7 +34,7 @@
   "devDependencies": {
     "@hot-loader/react-dom": "^16.13.0",
     "assets-webpack-plugin": "^5.0.3",
-    "autoprefixer": "^9.8.5",
+    "autoprefixer": "^7.2.6",
     "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^10.1.0",
@@ -83,9 +82,12 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.11.0",
+    "fontsource-roboto": "^2.1.4",
     "lodash": "^4.17.19",
     "moment": "^2.27.0",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0"
   }
 }
