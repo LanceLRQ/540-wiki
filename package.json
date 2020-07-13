@@ -82,6 +82,7 @@
     "webpackbar": "^4.0.0"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
     "lodash": "^4.17.19",
     "moment": "^2.27.0",
     "react": "^16.13.1",
