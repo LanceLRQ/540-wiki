@@ -25,6 +25,7 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/extensions': 'off',
     'no-trailing-spaces': 'off',
+    'react/jsx-fragments': 'off',
     'no-bitwise': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
     'jsx-a11y/tabindex-no-positive': 'off',

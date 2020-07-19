@@ -1,14 +1,14 @@
 import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import MoyateAppComponent from './moyate';
+import ToolsAppComponent from './tools';
 
 export const RootApp = () => {
   return <React.Fragment>
     <CssBaseline />
     <Router>
-      <Route path="/moyate" component={MoyateAppComponent} />
-      <Route path="/" render={() => <Redirect to="/moyate" />} />
+      <Route path="/tools" component={ToolsAppComponent} />
+      <Route path="/" exact render={() => <Redirect to="/tools" />} />
     </Router>
   </React.Fragment>;
 };
