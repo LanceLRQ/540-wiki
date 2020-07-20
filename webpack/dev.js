@@ -30,13 +30,13 @@ const genDevConf = (apiMapping, apiBranch, diyPlugins=[]) => {
   }
   console.log('----------------------------------------------\x1B[0m\n');
   const API_HOST_MAPPINGS = {
-    'local': 'http://localhost',
+    'local': 'http://localhost:52540',
     'production': `https://www.abc.com`,
   };
   const API_BASE_MAPPINGS = {
-    'local': '',
+    'local': '/api',
     'online': '/api',
-    'production':  '',
+    'production':  '/api',
   };
   const WEBSOCKET_HOST_MAPPING = {
     // 'local': 'wss://localhost'

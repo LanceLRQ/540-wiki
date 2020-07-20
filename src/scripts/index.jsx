@@ -4,18 +4,17 @@ import 'styles/index.scss';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { RootApp } from './root';
-
-const render = () => {
+const render = (Component) => {
   ReactDOM.render(
-    <RootApp />,
+    <Component />,
     document.getElementById('root')
   );
 };
 
-render();
-// if (module.hot) {
-//   module.hot.accept('./root.jsx', () => {
-//     render(require('./root.jsx').default);
-//   });
-// }
+render(require('./root.jsx').default);
+
+if (module.hot) {
+  module.hot.accept('./root.jsx', () => {
+    render(require('./root.jsx').default);
+  });
+}
