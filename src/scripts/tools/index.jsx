@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { BrowserRouter as Router, Route, withRouter } from 'react-router-dom';
+import { Switch, Route, withRouter } from 'react-router-dom';
 import {
   AppBar, Toolbar, IconButton, Typography,
   Drawer, List, ListItem, ListItemText, ListSubheader,
@@ -10,6 +10,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import MoyatingGenerator from './myt';
 import ZeroPlusSevenBible from './shizi';
 import { RoutePropTypes } from '../common/prop-types/common';
+import { MainRoutes, ToolsRoutes } from '../common/constant/routes';
+import { buildPath, gotoPath } from '../common/utils/location_helper';
 
 const ToolsIndex = (props) => {
   return <div>欢迎使用整活工具箱，请选择你要整的活儿</div>;
@@ -38,10 +40,18 @@ const ToolsApp = withRouter((props) => {
         }
       >
         <ListItem button>
-          <ListItemText>狮林圣经</ListItemText>
+          <ListItemText
+            onClick={gotoPath(props, buildPath(ToolsRoutes.shizi))}
+          >
+            狮林圣经
+          </ListItemText>
         </ListItem>
         <ListItem button>
-          <ListItemText>磨牙特生成器</ListItemText>
+          <ListItemText
+            onClick={gotoPath(props, buildPath(ToolsRoutes.myt))}
+          >
+            磨牙特生成器
+          </ListItemText>
         </ListItem>
       </List>
     </Drawer>
@@ -65,11 +75,11 @@ const ToolsApp = withRouter((props) => {
       </AppBar>
     </header>
     <section>
-      <Router>
-        <Route path="/tools/myt" exact component={MoyatingGenerator} />
-        <Route path="/tools/shizi" exact component={ZeroPlusSevenBible} />
-        <Route path="/tools" exact render={() => <ToolsIndex />} />
-      </Router>
+      <Switch>
+        <Route path={ToolsRoutes.myt} exact component={MoyatingGenerator} />
+        <Route path={ToolsRoutes.shizi} exact component={ZeroPlusSevenBible} />
+        <Route path={MainRoutes.Tools} exact render={() => <ToolsIndex />} />
+      </Switch>
     </section>
   </main>;
 });
