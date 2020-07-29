@@ -1,9 +1,11 @@
 /** 垃圾换生成器
  *  生成思路来源：https://github.com/menzi11/BullshitGenerator
 */
-import loveLetter from './love_letter.json';
+import loveLetter from './love_letter.js';
 
-const { famous, bosh, after, before } = loveLetter;
+const {
+  famous, bosh, after, before,
+} = loveLetter;
 
 // 一个很公平的洗牌算法 (x)
 const knuthShuffle = (array) => {
