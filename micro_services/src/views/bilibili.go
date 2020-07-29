@@ -50,6 +50,8 @@ func GetFirstVideoView(ctx iris.Context) {
 		bilibiliApiFailed(ctx)
 		return
 	}
+	
+	fmt.Println(utils.ObjectToJSONString(spData, true))
 
 	if spData.Data.Page.Count <= 0 {
 		ctx.JSON(structs.RESTfulAPIResult{

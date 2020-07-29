@@ -18,7 +18,7 @@ export const ZeroPlusSevenBibleTheOldTestament = `$1
 未来就会有无限可能
 所以
 $1
-做我女朋友吧`;
+$5`;
 
 export const ZeroPlusSevenBibleTheNewTestament = `$1：$2，你是$2吗？你知道吗？我对你的思念，就像喜马拉雅山一样高。
 $2：$1，你是$1吗？你知道吗？我对你的思念，就像马里亚纳海沟一样深。
