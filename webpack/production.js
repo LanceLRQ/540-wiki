@@ -26,7 +26,7 @@ const devconf = {
     new webpack.DefinePlugin({
       'process.env': {
         // 'NODE_ENV': JSON.stringify('production'),
-        'API_HOST': JSON.stringify('https://www.abc.com'),
+        'API_HOST': JSON.stringify('https://540.wiki'),
         'BUILD_ENV': JSON.stringify({
           version: process.env['BRANCH_NAME'],
           commit: process.env['GIT_COMMIT'],

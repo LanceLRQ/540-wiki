@@ -31,7 +31,7 @@ const genDevConf = (apiMapping, apiBranch, diyPlugins=[]) => {
   console.log('----------------------------------------------\x1B[0m\n');
   const API_HOST_MAPPINGS = {
     'local': 'http://localhost:52540',
-    'production': `https://www.abc.com`,
+    'production': `https://540.wiki`,
   };
   const API_BASE_MAPPINGS = {
     'local': '/api',
@@ -48,6 +48,7 @@ const genDevConf = (apiMapping, apiBranch, diyPlugins=[]) => {
         'API_ROOT': JSON.stringify('/api'),
         'API_BRANCH': JSON.stringify(apiBranch),
         'API_MAPPING': JSON.stringify(apiMapping),
+        'API_HOST': JSON.stringify(API_HOST_MAPPINGS[apiMapping] || API_HOST_MAPPINGS.local),
         'BUILD_ENV': JSON.stringify({
           version: process.env['BRANCH_NAME'],
           commit: process.env['GIT_COMMIT'],

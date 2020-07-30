@@ -1,13 +1,14 @@
 import { get } from 'lodash';
-import React, { useState } from 'react';
-import axios  from 'axios';
-import {
+import React, { useState } from 'react';import {
   Container, Grid, TextField, Button,
   RadioGroup, FormControlLabel, Radio
 } from '@material-ui/core';
+import { useSnackbar } from 'notistack';
+import { ServerApi } from '../../common/utils/api_client';
 import { ZeroPlusSevenBibleTheOldTestament } from '../../common/constant/bible';
 
 const ZeroPlusSevenBible = (props) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [memberId, setMemberId] = useState('');
   const [xiaoxianruo, setXiaoxianruo] = useState('小仙若');
   const [bible, setBible] = useState('');
@@ -25,23 +26,28 @@ const ZeroPlusSevenBible = (props) => {
       mid = match[1];
     }
     setLoading(true);
-    axios({
-      url: 'http://localhost:52540/api/first_video',
+    const req = ServerApi({
+      url: '/api/first_video',
       params: {
         mid,
       },
       method: 'get',
-    }).then((resp) => {
-      setLoading(false);
+    });
+    req.result.then((resp) => {
       const res = resp.data;
-      if (get(res, 'status', false)) {
-        if (videoType === 'bv') {
-          setVideo(get(res, 'data.bvid'));
-        } else {
-          setVideo(`av${get(res, 'data.aid')}`);
+      setLoading(false);
+      if (res.status) {
+        if (get(res, 'status', false)) {
+          if (videoType === 'bv') {
+            setVideo(get(res, 'data.bvid'));
+          } else {
+            setVideo(`av${get(res, 'data.aid')}`);
+          }
+          setXiaoxianruo(get(res, 'data.author'));
+          setVideoName(get(res, 'data.title'));
         }
-        setXiaoxianruo(get(res, 'data.author'));
-        setVideoName(get(res, 'data.title'));
+      } else {
+        enqueueSnackbar(`请求接口错误：${res.message}`, { variant: 'error' });
       }
     });
   };
@@ -72,7 +78,7 @@ const ZeroPlusSevenBible = (props) => {
         </RadioGroup>
       </Grid>
       <Grid item xs={12}>
-        <Button color="primary" variant="contained" onClick={req} loading={loading}>读取信息</Button>
+        <Button color="primary" variant="contained" onClick={req} disabled={loading}>读取信息</Button>
       </Grid>
       <Grid item xs={6}>
         <TextField
