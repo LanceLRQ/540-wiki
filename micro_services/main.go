@@ -1,17 +1,17 @@
 package main
 
-import (
-	"log"
-	"micro_services/src"
-	"micro_services/src/utils"
-)
+import "micro_services/src/guard"
 
 func main() {
-	utils.InitGlobal()
-	server := src.NewServer()
-	if err := server.RunServer(); err != nil {
-		log.Fatal(err)
-	}
+	//if *watcherMode {
+	guard.NewGuardClientWorker()
+	//} else {
+	//	utils.InitGlobal()
+	//	server := src.NewServer()
+	//	if err := server.RunServer(); err != nil {
+	//		log.Fatal(err)
+	//	}
+	//}
 }
 
 
