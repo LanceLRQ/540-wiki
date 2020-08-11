@@ -3,10 +3,13 @@ import 'styles/index.scss';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { SnackbarProvider } from 'notistack';
 
 const render = (Component) => {
   ReactDOM.render(
-    <Component />,
+    <SnackbarProvider>
+      <Component />
+    </SnackbarProvider>,
     document.getElementById('root')
   );
 };

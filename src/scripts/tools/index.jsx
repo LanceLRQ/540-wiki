@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import {
@@ -29,6 +29,9 @@ const useStyles = makeStyles((theme) => ({
 const ToolsApp = withRouter((props) => {
   const classes = useStyles();
   const [isDrawerOpen, setDrawerOpen] = useState(false);
+  useEffect(() => {
+    document.title = '整活工具箱';
+  }, []);
   return <main>
     <Drawer anchor="left" open={isDrawerOpen} onClose={() => { setDrawerOpen(false); }}>
       <List
