@@ -152,9 +152,8 @@ func (client *BilibiliGuardClient) send(headerLength uint16, ver uint16, action 
 }
 
 func (client *BilibiliGuardClient) receiveDanmakuMessage() {
-	message := models.DanmakuProtocol{}
-	defer client.danmakuClient.Close()
 	for {
+		message := models.DanmakuProtocol{}
 		err := message.LoadBuffer(client.danmakuClient)
 		if err != nil {
 			fmt.Printf("receive message error: %s\n", err.Error())
