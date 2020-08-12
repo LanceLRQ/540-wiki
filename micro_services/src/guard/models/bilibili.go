@@ -42,7 +42,7 @@ func (proto *DanmakuProtocol) DumpBuffer() (*bytes.Buffer, error) {
 	writer := bufio.NewWriter(buffer)
 	buf16 := make([]byte, 2)
 	buf32 := make([]byte, 4)
-	// packetlength
+	// PacketLength
 	binary.BigEndian.PutUint32(buf32, packetlength)
 	if _, err := writer.Write(buf32); err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func (proto *DanmakuProtocol) DumpBuffer() (*bytes.Buffer, error) {
 }
 
 func (proto *DanmakuProtocol) LoadBuffer(stream io.Reader, deflate bool) error {
-	var reader io.Readerg
+	var reader io.Reader
 	if deflate {
 		reader = flate.NewReader(stream)
 	} else{
@@ -89,7 +89,7 @@ func (proto *DanmakuProtocol) LoadBuffer(stream io.Reader, deflate bool) error {
 	if err != nil || protoLen < 16 {
 		return fmt.Errorf("danmaku message protocal error")
 	}
-	// packetlength
+	// PacketLength
 	proto.PacketLength = binary.BigEndian.Uint32(buffer[0:4])
 	// HeaderLength
 	proto.HeaderLength = binary.BigEndian.Uint16(buffer[4:6])
@@ -101,13 +101,12 @@ func (proto *DanmakuProtocol) LoadBuffer(stream io.Reader, deflate bool) error {
 	proto.Parameter = binary.BigEndian.Uint32(buffer[12:16])
 	// Content
 	if proto.PacketLength > 16 {
+		fmt.Println(proto.String())
 		contentByte := make([]byte, proto.PacketLength - 16)
-		if _, err := reader.Read(contentByte); err != nil {
-			return err
-		}
+		_, _ = reader.Read(contentByte)  // ignore_error
 		proto.Content = contentByte
 		isZiped1 := proto.Version == 2 && proto.Action == 5
-		isZiped2 := contentByte[0] == 0x78 && contentByte[1] == 0xDA
+		isZiped2 := false //contentByte[0] == 0x78 && contentByte[1] == 0xDA
 		if !deflate && (isZiped1 || isZiped2)  {     	// 处理deflate消息
 			contentByte = contentByte[2:len(contentByte) -1] 			// Skip 0x78 0xDA
 			buf := bytes.NewBuffer(contentByte)
@@ -115,4 +114,15 @@ func (proto *DanmakuProtocol) LoadBuffer(stream io.Reader, deflate bool) error {
 		}
 	}
 	return nil
+}
+
+func (proto *DanmakuProtocol) String() string {
+	return fmt.Sprintf(
+		"packetLength=%d; headerLength=%d; version=%d; action=%d; Parameter=%d",
+		proto.PacketLength,
+		proto.HeaderLength,
+		proto.Version,
+		proto.Action,
+		proto.Parameter,
+	)
 }

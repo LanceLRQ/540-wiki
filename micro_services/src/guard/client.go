@@ -65,7 +65,7 @@ func (client *BilibiliGuardClient) getBilibiliLiveConfig() error {
 /**
 	连接b站的直播弹幕服务器
 */
-func (client *BilibiliGuardClient) ConnectToLiveStreamService() error {
+func (client *BilibiliGuardClient) ConnectToLiveStreamService(async bool) error {
 	addr := fmt.Sprintf("%s:%d", client.broadcastHost, client.broadcastPort)
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", addr)
 	if err != nil {
@@ -81,11 +81,17 @@ func (client *BilibiliGuardClient) ConnectToLiveStreamService() error {
 		return err
 	}
 	// 如果握手成功， 启动监听函数
-	go client.receiveDanmakuMessage()
 	go func() {
-		time.Sleep(30 * time.Second)
-		_ = client.heartBeat()
+		for {
+			time.Sleep(30 * time.Second)
+			_ = client.heartBeat()
+		}
 	}()
+	if async {
+		go client.receiveDanmakuMessage()
+	} else {
+		client.receiveDanmakuMessage()
+	}
 	return nil
 }
 
@@ -96,13 +102,13 @@ func (client *BilibiliGuardClient) sendShakehandMessage() error {
 	payload := struct {
 		RoomId int		`json:"roomid"`
 		UID int			`json:"uid"`
-		Protover int	`json:"protover"`
+		ProtoVer int	`json:"protover"`
 		Token string	`json:"token"`
 		Platform string	`json:"platform"`
 	}{
 		RoomId: client.roomId,
 		UID: 0,
-		Protover: 2,
+		ProtoVer: 2,
 		Token: client.broadcastToken,
 		Platform: "danmuji",
 	}
@@ -136,7 +142,6 @@ func (client *BilibiliGuardClient) send(headerLength uint16, ver uint16, action 
 		Content: []byte(body),
 	}
 	if buffer, err := payload.DumpBuffer(); err == nil {
-
 		if _, err := client.danmakuClient.Write(buffer.Bytes()); err != nil {
 			return fmt.Errorf("send message error: %s", err.Error())
 		}
@@ -152,7 +157,7 @@ func (client *BilibiliGuardClient) receiveDanmakuMessage() {
 	for {
 		err := message.LoadBuffer(client.danmakuClient, false)
 		if err != nil {
-			fmt.Printf("receive message error: %s", err.Error())
+			fmt.Printf("receive message error: %s\n", err.Error())
 			continue
 		}
 		if client.onMessage != nil {
