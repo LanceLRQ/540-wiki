@@ -160,7 +160,7 @@ func (client *BilibiliGuardClient) receiveDanmakuMessage() {
 			continue
 		}
 		if client.onMessage != nil {
-			go client.onMessage(message)
+			client.onMessage(message)
 		}
 	}
 }
