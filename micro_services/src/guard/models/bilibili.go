@@ -76,14 +76,9 @@ func (proto *DanmakuProtocol) DumpBuffer() (*bytes.Buffer, error) {
 	return buffer, nil
 }
 
-func (proto *DanmakuProtocol) LoadBuffer(stream io.Reader, deflate bool) error {
-	var reader io.Reader
-	if deflate {
-		reader = flate.NewReader(stream)
-	} else{
-		reader = bufio.NewReader(stream)
-	}
+func (proto *DanmakuProtocol) LoadBuffer(stream io.Reader) error {
 	buffer := make([]byte, 16)
+	reader := bufio.NewReader(stream)
 	protoLen, err := reader.Read(buffer)
 	if protoLen == 0 { return nil }
 	if err != nil || protoLen < 16 {
@@ -99,18 +94,19 @@ func (proto *DanmakuProtocol) LoadBuffer(stream io.Reader, deflate bool) error {
 	proto.Action = binary.BigEndian.Uint32(buffer[8:12])
 	// Parameter
 	proto.Parameter = binary.BigEndian.Uint32(buffer[12:16])
+
 	// Content
 	if proto.PacketLength > 16 {
-		fmt.Println(proto.String())
 		contentByte := make([]byte, proto.PacketLength - 16)
-		_, _ = reader.Read(contentByte)  // ignore_error
+		lng, _ := reader.Read(contentByte) // ignore_error
 		proto.Content = contentByte
 		isZiped1 := proto.Version == 2 && proto.Action == 5
-		isZiped2 := false //contentByte[0] == 0x78 && contentByte[1] == 0xDA
-		if !deflate && (isZiped1 || isZiped2)  {     	// 处理deflate消息
-			contentByte = contentByte[2:len(contentByte) -1] 			// Skip 0x78 0xDA
+		isZiped2 := contentByte[0] == 0x78 && contentByte[1] == 0xDA
+		if isZiped1 || isZiped2 {     	// 处理deflate消息
+			contentByte = contentByte[2: lng-1] 			// Skip 0x78 0xDA
 			buf := bytes.NewBuffer(contentByte)
-			return proto.LoadBuffer(buf, true)
+			fReader := flate.NewReader(buf)
+			return proto.LoadBuffer(fReader)
 		}
 	}
 	return nil

@@ -7,7 +7,7 @@ import (
 
 func NewGuardClientWorker() {
 	// 146088 沐哥
-	if client, err := NewBilibiliGuardClient(22237); err != nil {
+	if client, err := NewBilibiliGuardClient(81711); err != nil {
 		panic(err)
 	} else {
 		client.onMessage = func(message models.DanmakuProtocol) {
