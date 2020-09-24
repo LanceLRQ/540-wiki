@@ -1,5 +1,6 @@
 export const MainRoutes = {
   Tools: '/tools',
+  Birthday: '/birthday',
 };
 
 export const ToolsRoutes = {
