@@ -1,7 +1,11 @@
+import '@/styles/cursor.scss';
+
 import { debounce } from 'lodash';
 import React, { useEffect } from 'react';
+import { CursorStars } from './cursor';
 
 export const BirthdayAppComponent = () => {
+  // 彩蛋监听
   useEffect(() => {
     let typeWords = '';
     const emitWords = 'URBBRGROUN';
@@ -22,6 +26,13 @@ export const BirthdayAppComponent = () => {
     return () => {
       // cleanup
       document.removeEventListener('keydown', keyDownListener);
+    };
+  }, []);
+  useEffect(() => {
+    const csWorker = new CursorStars();
+    csWorker.bind();
+    return () => {
+      csWorker.unbind();
     };
   }, []);
   return <div>
