@@ -1,3 +1,4 @@
 .idea
 node_modules
-frontend/dist/build
+home/dist/build
+game/dist/build

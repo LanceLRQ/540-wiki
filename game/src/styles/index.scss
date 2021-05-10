@@ -1,0 +1,27 @@
+.title {
+    font-size: 20px;
+    margin: 10px;
+}
+
+.navigator {
+    display: flex;
+    flex-direction: row;
+    .link {
+        display: block;
+        height: 50px;
+        width: 80px;
+        line-height: 50px;
+        color: black;
+        margin: 10px;
+        text-decoration: none;
+        text-align: center;
+        &.current {
+            color: blue;
+            border-bottom: 3px solid blue;
+        }
+    }
+}
+
+.container {
+    margin: 20px;
+}
