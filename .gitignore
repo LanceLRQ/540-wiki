@@ -1,4 +1,4 @@
 .idea
 node_modules
 micro_services/micro_services
-dist/build
+frontend/dist/build
