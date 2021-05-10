@@ -1,4 +1,4 @@
-module micro_services
+module home
 
 go 1.11
 
