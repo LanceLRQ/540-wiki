@@ -1,3 +1,27 @@
+/***
+ * 数据格式说明
+ *
+ * ==============
+ * 类型 | 操作名 | 参数
+ * ==============
+ *
+ * 类型： 0 - canvas函数， 1 - canvas属性，2 - 画板操作
+ *
+*/
+
+const CANVAS_ACTIONS_MAPPING = {
+  0: 'beginPath',
+  1: 'closePath',
+
+  2: 'strokeStyle',
+  3: 'lineWidth',
+  4: 'lineCap',
+  5: 'lineJoin',
+
+  6: 'lineTo',
+  7: 'moveTo',
+};
+
 export class DrawBoard {
   // canvas dom
   canvas:HTMLCanvasElement = null
@@ -11,9 +35,16 @@ export class DrawBoard {
   // is drawing
   drawing:boolean = false;
 
+  // readonly mode
+  readonly :boolean = false;
+
   pencilWidth: number = 1;
 
   pencilColor: string = '#000';
+
+  cursorType: string = 'pencil';
+
+  historyStack: ImageData[] = [];
 
   constructor(c:HTMLCanvasElement, cursor:HTMLElement) {
     this.canvas = c;
@@ -31,6 +62,7 @@ export class DrawBoard {
     this.canvas.addEventListener('mousemove', this.onMouseMove);
     this.canvas.addEventListener('mouseleave', this.onMouseLeave);
     this.canvas.addEventListener('mouseup', this.onMouseUp);
+    this.clearCanvas();
   }
 
   destory() {
@@ -40,16 +72,29 @@ export class DrawBoard {
     this.canvas.removeEventListener('mouseup', this.onMouseUp);
   }
 
+  clearCanvas() {
+    this.historyStack = [];
+    this.ctx.fillStyle = '#fff';
+    this.ctx.fillRect(-1, -1, this.canvas.width, this.canvas.height);
+  }
+
   setPencilStyle(width:number, color:string) {
     this.pencilWidth = width;
     this.pencilColor = color;
   }
 
+  setCursorType(type:string) {
+    this.cursorType = type;
+  }
+
   onMouseDown(ev:MouseEvent) {
+    if (this.readonly) return;
+    // 把图像数据写入到栈上
+    this.historyStack.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
+    // 启动画图
     this.drawing = true;
     this.ctx.beginPath();
-    console.log(this.pencilWidth, this.pencilColor)
-    this.ctx.strokeStyle = this.pencilColor;
+    this.ctx.strokeStyle = (this.cursorType === 'eraser') ? '#FFF' : this.pencilColor;
     this.ctx.lineWidth = this.pencilWidth;
     this.ctx.lineCap = 'round';
     this.ctx.lineJoin = 'round';
@@ -62,8 +107,8 @@ export class DrawBoard {
       this.ctx.stroke();
     }
     this.cursorEl.style.display = 'block';
-    this.cursorEl.style.left = `${this.canvas.offsetLeft + ev.offsetX - 2}px`;
-    this.cursorEl.style.top = `${this.canvas.offsetTop + ev.offsetY - 20}px`;
+    this.cursorEl.style.left = `${this.canvas.offsetLeft + ev.offsetX - this.pencilWidth}px`;
+    this.cursorEl.style.top = `${this.canvas.offsetTop + ev.offsetY - this.pencilWidth}px`;
     document.body.style.cursor = 'none';
   }
 
@@ -77,5 +122,11 @@ export class DrawBoard {
   onMouseUp() {
     this.ctx.closePath();
     this.drawing = false;
+  }
+
+  undo() {
+    if (this.historyStack.length > 0) {
+      this.ctx.putImageData(this.historyStack.pop(), 0, 0);
+    }
   }
 }

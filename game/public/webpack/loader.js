@@ -99,6 +99,17 @@ export const buildLodaers = (dev = true, ssr = false) => {
     ],
   });
 
+  // Svg Loader
+  builder.registerLoader(
+    {
+      test: /\.svg$/,
+      loader: 'svg-sprite-loader',
+      options: {
+        symbolId: 'svg-[name]'
+      }
+    },
+  );
+
   // Sass Loader 10.x (用官方推荐的dart-sass，node-sass要编译，日常下载失败，很麻烦)
   // 注意，不要在新版的sass-loader里用HappyPack，出错到你怀疑人生
   // 加了MiniCssExtractPlugin以后也不要用thread-loader

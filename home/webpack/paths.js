@@ -4,6 +4,7 @@ const DIRS = {
   self: './',
   scripts: 'scripts/',
   styles: 'styles/',
+  svgs: 'svgs/',
   images: 'images/',
   plugins: 'plugins/',
   locales: 'locales/',
