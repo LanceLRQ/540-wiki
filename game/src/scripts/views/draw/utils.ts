@@ -1,26 +1,5 @@
-/***
- * 数据格式说明
- *
- * ==============
- * 类型 | 操作名 | 参数
- * ==============
- *
- * 类型： 0 - canvas函数， 1 - canvas属性，2 - 画板操作
- *
-*/
-
-const CANVAS_ACTIONS_MAPPING = {
-  0: 'beginPath',
-  1: 'closePath',
-
-  2: 'strokeStyle',
-  3: 'lineWidth',
-  4: 'lineCap',
-  5: 'lineJoin',
-
-  6: 'lineTo',
-  7: 'moveTo',
-};
+import { get } from 'lodash';
+import { DrawBoardPoint } from './structs/points';
 
 export class DrawBoard {
   // canvas dom
@@ -38,13 +17,17 @@ export class DrawBoard {
   // readonly mode
   readonly :boolean = false;
 
-  pencilWidth: number = 1;
+  pencilWidth: number = 11;
 
   pencilColor: string = '#000';
 
   cursorType: string = 'pencil';
 
+  // 绘图历史栈
   historyStack: ImageData[] = [];
+
+  // 命令栈
+  commandStack: any[] = [];
 
   constructor(c:HTMLCanvasElement, cursor:HTMLElement) {
     this.canvas = c;
@@ -72,6 +55,43 @@ export class DrawBoard {
     this.canvas.removeEventListener('mouseup', this.onMouseUp);
   }
 
+  command(action:string, params:any) {
+    try {
+      switch (action) {
+        case 'pencil':
+        case 'eraser':
+        {
+          if (action === 'pencil') {
+            // 铅笔画图
+            this.ctx.strokeStyle = get(params, 'color', '#000');
+          } else {
+            // 擦除
+            this.ctx.strokeStyle = '#fff';
+          }
+          this.ctx.lineWidth = get(params, 'witdh', 11);
+          this.ctx.lineCap = 'round';
+          this.ctx.lineJoin = 'round';
+          this.ctx.beginPath();
+          const points:any[] = get(params, 'points', []);
+          points.forEach((point:DrawBoardPoint) => {
+            if (point.act === 1) { // lineTo
+              this.ctx.lineTo(point.x, point.y);
+            } else {
+              this.ctx.moveTo(point.x, point.y);
+            }
+          });
+          this.ctx.closePath();
+          break;
+        }
+        default:
+          break;
+      }
+    } catch (e) {
+      console.error(`exec canvas command error: ${e}`);      // eslint-disable-line
+      console.error(e);      // eslint-disable-line
+    }
+  }
+
   clearCanvas() {
     this.historyStack = [];
     this.ctx.fillStyle = '#fff';
@@ -93,11 +113,11 @@ export class DrawBoard {
     this.historyStack.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
     // 启动画图
     this.drawing = true;
-    this.ctx.beginPath();
     this.ctx.strokeStyle = (this.cursorType === 'eraser') ? '#FFF' : this.pencilColor;
     this.ctx.lineWidth = this.pencilWidth;
     this.ctx.lineCap = 'round';
     this.ctx.lineJoin = 'round';
+    this.ctx.beginPath();
     this.ctx.moveTo(ev.offsetX, ev.offsetY);
   }
 

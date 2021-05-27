@@ -94,6 +94,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
+    "@types/lodash": "^4.14.170",
     "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "dayjs": "^1.10.4",
