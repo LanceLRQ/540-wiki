@@ -30,12 +30,16 @@ export const SketchingBoard = (props) => {
   const [colorPickerVisible, setColorPickerVisible] = useState(false);
   const [cursorType, setCursorType] = useState('pencil');
   const clearBtnRef = useRef();
-  const [clearConfirmVisible, setClearConfirmVisible] = useState(false)
+  const [clearConfirmVisible, setClearConfirmVisible] = useState(false);
 
   useEffect(() => {
     if (canvasRef.current) {
       drawBoard = new DrawBoard(canvasRef.current, pencilRef.current);
+      drawBoard.onChange = (msg) => {
+        console.log(JSON.stringify(msg));
+      };
       drawBoard.init();
+      window.drawBoard = drawBoard;
       drawBoard.setPencilStyle(pencilWidth, pencilColor);
     }
     return () => {
@@ -140,7 +144,7 @@ export const SketchingBoard = (props) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => { setClearConfirmVisible(false); }}>取消</Button>
-          <Button onClick={() => { setClearConfirmVisible(false); drawBoard.clearCanvas(); }} color="primary" autoFocus>确定</Button>
+          <Button onClick={() => { setClearConfirmVisible(false); drawBoard.clean(); }} color="primary" autoFocus>确定</Button>
         </DialogActions>
       </Dialog>
     </div>

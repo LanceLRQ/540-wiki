@@ -1,5 +1,7 @@
-import { get } from 'lodash';
+import { noop } from 'lodash';
 import { DrawBoardPoint } from './structs/points';
+import { DrawBoardMessage } from './structs/message';
+import { DrawBoardPencilAction } from './structs/actions';
 
 export class DrawBoard {
   // canvas dom
@@ -21,6 +23,7 @@ export class DrawBoard {
 
   pencilColor: string = '#000';
 
+  // 光标类型
   cursorType: string = 'pencil';
 
   // 绘图历史栈
@@ -29,58 +32,57 @@ export class DrawBoard {
   // 命令栈
   commandStack: any[] = [];
 
+  // 监听变更事件
+  onChange: Function = noop;
+
   constructor(c:HTMLCanvasElement, cursor:HTMLElement) {
     this.canvas = c;
     this.ctx = this.canvas.getContext('2d');
     this.cursorEl = cursor;
 
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseLeave = this.onMouseLeave.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
+    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
   }
 
   init() {
-    this.canvas.addEventListener('mousedown', this.onMouseDown);
-    this.canvas.addEventListener('mousemove', this.onMouseMove);
-    this.canvas.addEventListener('mouseleave', this.onMouseLeave);
-    this.canvas.addEventListener('mouseup', this.onMouseUp);
-    this.clearCanvas();
+    this.canvas.addEventListener('mousedown', this.handleMouseDown);
+    this.canvas.addEventListener('mousemove', this.handleMouseMove);
+    this.canvas.addEventListener('mouseleave', this.handleMouseLeave);
+    this.canvas.addEventListener('mouseup', this.handleMouseUp);
+    this.clean();
   }
 
   destory() {
-    this.canvas.removeEventListener('mousedown', this.onMouseDown);
-    this.canvas.removeEventListener('mousemove', this.onMouseMove);
-    this.canvas.removeEventListener('mouseleave', this.onMouseLeave);
-    this.canvas.removeEventListener('mouseup', this.onMouseUp);
+    this.canvas.removeEventListener('mousedown', this.handleMouseDown);
+    this.canvas.removeEventListener('mousemove', this.handleMouseMove);
+    this.canvas.removeEventListener('mouseleave', this.handleMouseLeave);
+    this.canvas.removeEventListener('mouseup', this.handleMouseUp);
   }
 
-  command(action:string, params:any) {
+  command(msg:DrawBoardMessage) {
     try {
-      switch (action) {
+      switch (msg.action) {
         case 'pencil':
-        case 'eraser':
         {
-          if (action === 'pencil') {
-            // 铅笔画图
-            this.ctx.strokeStyle = get(params, 'color', '#000');
-          } else {
-            // 擦除
-            this.ctx.strokeStyle = '#fff';
-          }
-          this.ctx.lineWidth = get(params, 'witdh', 11);
+          this.historyStack.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
+          const params:DrawBoardPencilAction = <DrawBoardPencilAction>msg.params;
+          this.ctx.strokeStyle = params.color;
+          this.ctx.lineWidth = params.width;
           this.ctx.lineCap = 'round';
           this.ctx.lineJoin = 'round';
           this.ctx.beginPath();
-          const points:any[] = get(params, 'points', []);
-          points.forEach((point:DrawBoardPoint) => {
-            if (point.act === 1) { // lineTo
+          params.points.forEach((point:DrawBoardPoint) => {
+            if (point.a === 1) { // lineTo
               this.ctx.lineTo(point.x, point.y);
+              this.ctx.stroke();
             } else {
               this.ctx.moveTo(point.x, point.y);
             }
           });
           this.ctx.closePath();
+
           break;
         }
         default:
@@ -92,7 +94,13 @@ export class DrawBoard {
     }
   }
 
-  clearCanvas() {
+  undo() {
+    if (this.historyStack.length > 0) {
+      this.ctx.putImageData(this.historyStack.pop(), 0, 0);
+    }
+  }
+
+  clean() {
     this.historyStack = [];
     this.ctx.fillStyle = '#fff';
     this.ctx.fillRect(-1, -1, this.canvas.width, this.canvas.height);
@@ -107,7 +115,7 @@ export class DrawBoard {
     this.cursorType = type;
   }
 
-  onMouseDown(ev:MouseEvent) {
+  handleMouseDown(ev:MouseEvent) {
     if (this.readonly) return;
     // 把图像数据写入到栈上
     this.historyStack.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
@@ -119,12 +127,14 @@ export class DrawBoard {
     this.ctx.lineJoin = 'round';
     this.ctx.beginPath();
     this.ctx.moveTo(ev.offsetX, ev.offsetY);
+    this.commandStack.push(new DrawBoardPoint(0, ev.offsetX, ev.offsetY));
   }
 
-  onMouseMove(ev:MouseEvent) {
+  handleMouseMove(ev:MouseEvent) {
     if (this.drawing) {
       this.ctx.lineTo(ev.offsetX, ev.offsetY);
       this.ctx.stroke();
+      this.commandStack.push(new DrawBoardPoint(1, ev.offsetX, ev.offsetY));
     }
     this.cursorEl.style.display = 'block';
     this.cursorEl.style.left = `${this.canvas.offsetLeft + ev.offsetX - this.pencilWidth}px`;
@@ -132,21 +142,27 @@ export class DrawBoard {
     document.body.style.cursor = 'none';
   }
 
-  onMouseLeave() {
+  handleMouseLeave() {
     this.cursorEl.style.display = 'none';
     document.body.style.cursor = 'default';
-    this.ctx.closePath();
-    this.drawing = false;
+    this.closeDrawing();
   }
 
-  onMouseUp() {
-    this.ctx.closePath();
-    this.drawing = false;
+  handleMouseUp() {
+    this.closeDrawing();
   }
 
-  undo() {
-    if (this.historyStack.length > 0) {
-      this.ctx.putImageData(this.historyStack.pop(), 0, 0);
+  closeDrawing() {
+    if (this.drawing) {
+      this.ctx.closePath();
+      this.drawing = false;
+      if (this.commandStack.length > 1) {
+        this.onChange(new DrawBoardMessage(
+          'pencil',
+          new DrawBoardPencilAction((this.cursorType === 'eraser') ? '#FFF' : this.pencilColor, this.pencilWidth, [...this.commandStack]))
+        );
+      }
+      this.commandStack = [];
     }
   }
 }

@@ -22,6 +22,7 @@ module.exports = {
   plugins: ['react'],
   rules: {
     'no-nested-ternary': 'warn',
+    'max-classes-per-file': 'off',
     'import/no-unresolved': 'off',
     'import/extensions': 'off',
     'no-trailing-spaces': 'off',
