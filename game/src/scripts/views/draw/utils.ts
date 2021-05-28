@@ -85,6 +85,12 @@ export class DrawBoard {
 
           break;
         }
+        case 'clean':
+          this.clean();
+          break;
+        case 'undo':
+          this.undo();
+          break;
         default:
           break;
       }
