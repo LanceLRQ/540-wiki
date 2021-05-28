@@ -16,12 +16,12 @@ export class DrawBoard {
   // is drawing
   drawing:boolean = false;
 
-  // readonly mode
+  // 只读模式：只读时mask是纯白色的；否则是有一定透明度的。
   readonly :boolean = false;
 
   pencilWidth: number = 11;
 
-  pencilColor: string = '#000';
+  pencilShape: string = 'circle';
 
   // 光标类型
   cursorType: string = 'pencil';
@@ -51,7 +51,7 @@ export class DrawBoard {
     this.canvas.addEventListener('mousemove', this.handleMouseMove);
     this.canvas.addEventListener('mouseleave', this.handleMouseLeave);
     this.canvas.addEventListener('mouseup', this.handleMouseUp);
-    this.clean();
+    this.reset()
   }
 
   destory() {
@@ -68,7 +68,8 @@ export class DrawBoard {
         {
           this.historyStack.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
           const params:DrawBoardPencilAction = <DrawBoardPencilAction>msg.params;
-          this.ctx.strokeStyle = params.color;
+          this.ctx.globalCompositeOperation = "destination-out";
+          this.ctx.strokeStyle = '#FFF';
           this.ctx.lineWidth = params.width;
           this.ctx.lineCap = 'round';
           this.ctx.lineJoin = 'round';
@@ -82,11 +83,10 @@ export class DrawBoard {
             }
           });
           this.ctx.closePath();
-
           break;
         }
-        case 'clean':
-          this.clean();
+        case 'reset':
+          this.reset();
           break;
         case 'undo':
           this.undo();
@@ -106,15 +106,23 @@ export class DrawBoard {
     }
   }
 
-  clean() {
+  reset() {
     this.historyStack = [];
-    this.ctx.fillStyle = '#fff';
-    this.ctx.fillRect(-1, -1, this.canvas.width, this.canvas.height);
+    this.ctx.globalCompositeOperation = "destination-over";
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    if (!this.readonly) {
+      this.ctx.globalAlpha = 0.5;
+    }
+
+    this.ctx.fillStyle = '#000';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.globalAlpha = 1;
   }
 
-  setPencilStyle(width:number, color:string) {
+
+  setPencilStyle(width:number) {
     this.pencilWidth = width;
-    this.pencilColor = color;
   }
 
   setCursorType(type:string) {
@@ -127,11 +135,12 @@ export class DrawBoard {
     this.historyStack.push(this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height));
     // 启动画图
     this.drawing = true;
-    this.ctx.strokeStyle = (this.cursorType === 'eraser') ? '#FFF' : this.pencilColor;
+    this.ctx.beginPath();
+    this.ctx.globalCompositeOperation = "destination-out";
+    this.ctx.strokeStyle = '#FFF';
     this.ctx.lineWidth = this.pencilWidth;
     this.ctx.lineCap = 'round';
     this.ctx.lineJoin = 'round';
-    this.ctx.beginPath();
     this.ctx.moveTo(ev.offsetX, ev.offsetY);
     this.commandStack.push(new DrawBoardPoint(0, ev.offsetX, ev.offsetY));
   }
@@ -165,7 +174,7 @@ export class DrawBoard {
       if (this.commandStack.length > 1) {
         this.onChange(new DrawBoardMessage(
           'pencil',
-          new DrawBoardPencilAction((this.cursorType === 'eraser') ? '#FFF' : this.pencilColor, this.pencilWidth, [...this.commandStack]))
+          new DrawBoardPencilAction( this.pencilShape, this.pencilWidth, [...this.commandStack]))
         );
       }
       this.commandStack = [];

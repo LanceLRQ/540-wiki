@@ -7,6 +7,7 @@ import {
 import {
   Menu as MenuIcon
 } from '@material-ui/icons';
+import CatImg from '@/images/cat.jpeg';
 import { SketchingBoard } from './sketching';
 
 export const DrawSomethingIndex = () => {
@@ -23,7 +24,7 @@ export const DrawSomethingIndex = () => {
       </Toolbar>
     </AppBar>
     <div style={{ width: 960, height: 540, margin: '24px auto' }}>
-      <SketchingBoard width={960} height={540} />
+      <SketchingBoard width={960} height={540} targetImage={CatImg} />
     </div>
   </div>;
 };

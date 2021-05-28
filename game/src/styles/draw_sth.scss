@@ -1,7 +1,10 @@
 #app-draw-somethind {
   .draw-wrapper {
-    canvas {
-      border: 1px solid #bfbfbf;
-    }
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+  .cover-layer {
+    border: 1px solid #bfbfbf;
   }
 }
