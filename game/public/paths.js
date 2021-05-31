@@ -10,7 +10,7 @@ export const ROOT = {
     STYLES: path.join(root, 'src/styles'),
     STATIC: path.join(root, 'src/static'),
     IMAGES: path.join(root, 'src/images'),
-    // SVG: path.join(root, 'src/svgs'),
+    SVG: path.join(root, 'src/svgs'),
     // LOCALES: path.join(root, 'src/locales'),
     // PLUGINS: path.join(root, 'src/plugins'),
   },
