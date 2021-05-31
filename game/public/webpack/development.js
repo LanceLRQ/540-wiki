@@ -44,7 +44,7 @@ export const buildDevelopmentWebpackConfiguration = (morePlugins = []) => {
       ],
     }], plugins, {}, true, false),
     buildLodaers(true, false),
-    buildWebpackDevServer('0.0.0.0', 3000),
+    buildWebpackDevServer('0.0.0.0', 5400),
     {
       // 用eval-source-map时，启动时慢一些，热更新时很快，浏览器里可以看到原本的代码。（发布到生产时不可以用这个！）
       devtool: 'eval-source-map',

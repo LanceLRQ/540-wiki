@@ -152,8 +152,8 @@ export class DrawBoard {
       this.commandStack.push(new DrawBoardPoint(1, ev.offsetX, ev.offsetY));
     }
     this.cursorEl.style.display = 'block';
-    this.cursorEl.style.left = `${this.canvas.offsetLeft + ev.offsetX - this.pencilWidth}px`;
-    this.cursorEl.style.top = `${this.canvas.offsetTop + ev.offsetY - this.pencilWidth}px`;
+    this.cursorEl.style.left = `${this.canvas.offsetLeft + ev.offsetX - (this.pencilWidth / 2)}px`;
+    this.cursorEl.style.top = `${this.canvas.offsetTop + ev.offsetY - (this.pencilWidth / 2)}px`;
     document.body.style.cursor = 'none';
   }
 

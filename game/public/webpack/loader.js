@@ -142,7 +142,7 @@ export const buildLodaers = (dev = true, ssr = false) => {
           fiber: require('fibers'),
         },
         // sourceMap: true,
-        // data: "@import '@/styles/themes/index.scss';",
+        additionalData: "@import '@/styles/antd/index.scss';",
       },
     }
   ];
