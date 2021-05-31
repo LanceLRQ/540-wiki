@@ -3,7 +3,7 @@
  * @param host
  * @param port
  */
-export const buildWebpackDevServer = (host='0.0.0.0', port=3000) => {
+export const buildWebpackDevServer = (host='0.0.0.0', port=5400) => {
   return {
     devServer: {
       // 如果有需要可以设置https证书
