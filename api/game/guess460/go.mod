@@ -5,8 +5,8 @@ go 1.15
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.12.0 // indirect
-	github.com/go-kratos/kratos/cmd/kratos/v2 v2.0.0-20210529155205-149fc0195eb6 // indirect
-	github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2 v2.0.0-20210529155205-149fc0195eb6 // indirect
+	github.com/go-kratos/kratos/cmd/kratos/v2 v2.0.0-20210531162156-ad8f12c9fda0 // indirect
+	github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2 v2.0.0-20210601032627-f83438b69394 // indirect
 	github.com/go-kratos/kratos/v2 v2.0.0-rc1
 	github.com/golang/protobuf v1.5.2
 	github.com/google/wire v0.5.0
@@ -18,7 +18,7 @@ require (
 	github.com/spf13/cobra v1.1.3 // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
 	golang.org/x/mod v0.4.2 // indirect
-	golang.org/x/sys v0.0.0-20210525143221-35b2ab0089ea // indirect
+	golang.org/x/sys v0.0.0-20210531225629-47163c9f4e4f // indirect
 	golang.org/x/term v0.0.0-20210503060354-a79de5458b56 // indirect
 	google.golang.org/genproto v0.0.0-20210524171403-669157292da3
 	google.golang.org/grpc v1.38.0
