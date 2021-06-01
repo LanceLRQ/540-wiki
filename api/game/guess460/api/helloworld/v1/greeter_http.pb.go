@@ -30,7 +30,7 @@ func NewGreeterHandler(srv GreeterHandler, opts ...http1.HandleOption) http.Hand
 	}
 	r := mux.NewRouter()
 
-	r.HandleFunc("/helloworld/{name}", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/hello/{name}", func(w http.ResponseWriter, r *http.Request) {
 		var in HelloRequest
 		if err := h.Decode(r, &in); err != nil {
 			h.Error(w, r, err)
@@ -75,13 +75,10 @@ func NewGreeterHTTPClient(client *http1.Client) GreeterHTTPClient {
 }
 
 func (c *GreeterHTTPClientImpl) SayHello(ctx context.Context, in *HelloRequest, opts ...http1.CallOption) (out *HelloReply, err error) {
-	path := binding.EncodePath("GET", "/helloworld/{name}", in)
+	path := binding.EncodePath("GET", "/hello/{name}", in)
 	out = &HelloReply{}
 
-	err = c.cc.Invoke(ctx, path, nil, &out, http1.Method("GET"), http1.PathPattern("/helloworld/{name}"))
+	err = c.cc.Invoke(ctx, path, nil, &out, http1.Method("GET"), http1.PathPattern("/hello/{name}"))
 
-	if err != nil {
-		return
-	}
 	return
 }

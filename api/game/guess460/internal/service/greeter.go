@@ -2,8 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	v1 "guess460/api/helloworld/v1"
@@ -20,7 +18,6 @@ type GreeterService struct {
 
 // NewGreeterService new a greeter service.
 func NewGreeterService(uc *biz.GreeterUsecase, logger log.Logger) *GreeterService {
-	fmt.Println("AA")
 	return &GreeterService{uc: uc, log: log.NewHelper(logger)}
 }
 
