@@ -7,24 +7,26 @@ option java_multiple_files = true;
 option java_package = "api.user";
 
 service User {
-    rpc CreateUser (CreateUserRequest) returns (CreateUserReply);
-    rpc UpdateUser (UpdateUserRequest) returns (UpdateUserReply);
-    rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply);
-    rpc GetUser (GetUserRequest) returns (GetUserReply);
-    rpc ListUser (ListUserRequest) returns (ListUserReply);
+    // 页面加载的时候必调用这个，然后给客户端发个token
+    rpc LoginAuth (LoginAuthRequest) returns (LoginAuthReply);
+    // 用于给用户修改自己的昵称，依赖登录状态的token来改
+    rpc SetUserName (UserNameRequest) returns (SetUserNameReply);
 }
 
-message CreateUserRequest {}
-message CreateUserReply {}
+message LoginAuthRequest {
+    string token = 1;
+}
+message LoginAuthReply {
+    // token
+    string token = 1;
+    // 昵称
+    string nick_name = 2;
+}
 
-message UpdateUserRequest {}
-message UpdateUserReply {}
-
-message DeleteUserRequest {}
-message DeleteUserReply {}
-
-message GetUserRequest {}
-message GetUserReply {}
-
-message ListUserRequest {}
-message ListUserReply {}
+message UserNameRequest {
+    string token = 1;
+    string nick_name = 2;
+}
+message SetUserNameReply {
+    string nick_name = 1;
+}

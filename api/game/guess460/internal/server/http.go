@@ -1,6 +1,9 @@
 package server
 
 import (
+	"context"
+	"fmt"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
@@ -11,6 +14,28 @@ import (
 	"guess460/internal/conf"
 	"guess460/internal/service"
 )
+
+
+type validator interface {
+	Validate() error
+}
+
+// Validator is a validator middleware.
+func Validator() middleware.Middleware {
+	return func(handler middleware.Handler) middleware.Handler {
+		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
+			fmt.Println(req)
+			if v, ok := req.(validator); ok {
+				if err := v.Validate(); err != nil {
+					return nil, errors.BadRequest("VALIDATOR", err.Error())
+				}
+			}
+			return handler(ctx, req)
+		}
+	}
+}
+
+
 
 // NewHTTPServer new a HTTP server.
 func NewHTTPServer(c *conf.Server, greeter *service.GreeterService, logger log.Logger) *http.Server {
@@ -29,6 +54,7 @@ func NewHTTPServer(c *conf.Server, greeter *service.GreeterService, logger log.L
 		middleware.Chain(
 			recovery.Recovery(),
 			tracing.Server(),
+			Validator(),
 			logging.Server(logger),
 		),
 	)
