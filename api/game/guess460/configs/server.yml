@@ -2,3 +2,9 @@ server:
   listen: 127.0.0.1
   port: 8460
 
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: 12345678
+  user_db: 1
+  room_db: 2

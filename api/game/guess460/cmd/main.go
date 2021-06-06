@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/urfave/cli/v2"
+	"guess460/internal"
 	"guess460/internal/server"
 	"log"
 	"os"
@@ -29,9 +30,10 @@ func main () {
 			// Load
 			err := server.LoadConfiguration(context.String("config"))
 			if err != nil { return err }
-			server.ParseListenAddress(context.String("listen"))
+			internal.ParseListenAddress(context.String("listen"))
+			go server.RedisClientWatcher()
 			// Run server
-			err = server.RunHttpServer()
+			err = internal.RunHttpServer()
 			if err != nil { return err }
 			return nil
 		},
