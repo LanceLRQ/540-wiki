@@ -2,8 +2,8 @@ package server
 
 import (
 	"github.com/kataras/iris/v12"
-	"guess460/internal/constants"
 	"guess460/internal/data"
+	"guess460/internal/errors"
 )
 
 func SendRESTSuccessResult(ctx iris.Context, content interface{}) {
@@ -15,22 +15,30 @@ func SendRESTSuccessResult(ctx iris.Context, content interface{}) {
 		Data: content,
 	})
 }
-
-func SendESTErrorResult (ctx iris.Context,code int) {
-	ctx.StatusCode(500)
-	message, ok := constants.ErrorsMessage[code]
-	if !ok { message = "Unknown Error" }
+func SendRESTSuccessResultWithMessage(ctx iris.Context, content interface{}, message string) {
+	ctx.StatusCode(200)
 	ctx.JSON(&data.RESTResult{
-		Status: false,
-		ErrCode: code,
+		Status: true,
+		ErrCode: 0,
 		Message: message,
+		Data: content,
 	})
 }
-func SendRESTErrorResultWithMsg (ctx iris.Context,code int, message string) {
+
+func SendESTErrorResult (ctx iris.Context, err error) {
 	ctx.StatusCode(500)
-	ctx.JSON(&data.RESTResult{
-		Status: false,
-		ErrCode: code,
-		Message: message,
-	})
+	// 类型断言：如果是Guess460CustomError，会试图读取具体错误信息
+	if pe, ok := err.(errors.Guess460CustomError); ok {
+		ctx.JSON(&data.RESTResult{
+			Status: false,
+			ErrCode: pe.Code,
+			Message: pe.Message,
+		})
+	} else if err != nil {
+		ctx.JSON(&data.RESTResult{
+			Status: false,
+			ErrCode: -1,
+			Message: err.Error(),
+		})
+	}
 }

@@ -1,12 +1,16 @@
 package account
 
-import "github.com/kataras/iris/v12"
+import (
+	"github.com/kataras/iris/v12"
+	"guess460/internal/constants"
+	"strings"
+)
 
 func getUserIdFromRequest (ctx iris.Context) string {
-	userId := ctx.GetHeader("GUESS460-ACCOUNT-ID")
+	userId := strings.TrimSpace(ctx.GetHeader(constants.AccountHeaderKey))
 	if userId == "" {
 		// 如果header里没有，去cookie里读
-		userId = ctx.GetCookie("guess460-account-id")
+		userId = strings.TrimSpace(ctx.GetCookie(constants.AccountIdCookieName))
 	}
 	return userId
 }
