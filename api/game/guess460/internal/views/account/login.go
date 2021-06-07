@@ -1,7 +1,6 @@
 package account
 
 import (
-	"github.com/go-redis/redis"
 	"github.com/kataras/iris/v12"
 	uuid "github.com/satori/go.uuid"
 	"guess460/internal/constants"
@@ -9,47 +8,46 @@ import (
 	"guess460/internal/errors"
 	"guess460/internal/server"
 	"guess460/internal/utils"
-	"net/http"
 	"strings"
 	"time"
 )
 
-
-func getUserInfo(userId string) (*data.AccountEntity, error) {
-	var userInfo data.AccountEntity
-
-	// read from redis
-	userInfoJSON, err := server.UserDB.Get(constants.AccountIdDBPrefix + userId).Result()
-	if err == redis.Nil {
-		return nil, errors.UserInfoNotExists
-	} else if err != nil {
-		return nil, errors.RedisConnectionError
-	} else {
-		ok := utils.JSONStringToObject(userInfoJSON, &userInfo)
-		if !ok {
-			return nil, errors.JSONParseError
-		}
+// 登录检查（GET)
+func loginCheckView(ctx iris.Context) {
+	jwt := server.GetUserJWTFromRequest(ctx)
+	if jwt == nil {
+		server.SendESTErrorResult(ctx, errors.LoginSessionInvalid)
+		return
 	}
-	return &userInfo, nil
+
+	userInfo, err := server.GetUserInfo(jwt.UserId)
+	if err != nil {
+		server.SendESTErrorResult(ctx, err)
+		return
+	}
+	server.SendRESTSuccessResult(ctx, userInfo)
 }
 
-// 登录检查和发号（GET)
-func loginCheckView (ctx iris.Context) {
+// 执行登录（POST)
+func doLoginView(ctx iris.Context) {
 	// 前端调用这个接口申请code标识符，然后默认发给cookie，前端再存一份到localstorage
 	// code作为每个客户端独立的一个标识符，丢失就丢失了，不管了。暂时不做用户系统
 
-	userId := getUserIdFromRequest(ctx)
+	jwt := server.GetUserJWTFromRequest(ctx)
+
 	isNew := false
 	var userInfo *data.AccountEntity
 	var err error
+	var userId string
 
-	if userId == "" {
+	if jwt == nil {
 		// 没读到就是没有
 		userId = uuid.NewV4().String()
 		isNew = true
 	} else {
+		userId = jwt.UserId
 		// 如果有id，从数据库里获取用户信息
-		userInfo, err = getUserInfo(userId)
+		userInfo, err = server.GetUserInfo(userId)
 		if err == errors.UserInfoNotExists {
 			userId = uuid.NewV4().String()
 			isNew = true
@@ -60,55 +58,54 @@ func loginCheckView (ctx iris.Context) {
 	}
 
 	if isNew {
+
+		// 昵称校验
+		nickName := strings.TrimSpace(ctx.PostValue("nick_name"))
+		if nickName == "" {
+			server.SendESTErrorResult(ctx, errors.UserNickNameEmpty)
+			return
+		}
+		if len(nickName) > 8 {
+			server.SendESTErrorResult(ctx, errors.UserNickNameLengthInvalid)
+			return
+		}
+
 		userInfo = &data.AccountEntity{
-			UserId:       userId,
+			Id:           userId,
+			NickName:     nickName,
 			RegisterTime: time.Now().Unix(),
 		}
 		// 入库
-		_, err := server.UserDB.Set(constants.AccountIdDBPrefix + userId, utils.ObjectToJSONString(userInfo, false), 0).Result()
+		_, err := server.UserDB.Set(constants.AccountIdDBPrefix+userId, utils.ObjectToJSONString(userInfo, false), 0).Result()
 		if err != nil {
 			server.SendESTErrorResult(ctx, errors.RedisConnectionError)
 			return
 		}
 	}
 
-	// 这里当做是刷新cookie了
-	ctx.SetCookie(&http.Cookie{
-		Name: constants.AccountIdCookieName,
-		Value: userId,
-		Expires: time.Now().AddDate(1, 0, 0), // 1年有效期
-		Path: "/",
-	})
+	server.SendUserJWTToCookie(ctx, userInfo)
 	server.SendRESTSuccessResult(ctx, userInfo)
 }
 
-// 获取用户信息 （GET)
-func getUserInfoView (ctx iris.Context) {
-	userId := strings.TrimSpace(ctx.URLParam("user_id"))
-	if userId == "" {
-		userId = getUserIdFromRequest(ctx)
-	}
-
-	userInfo, err := getUserInfo(userId)
-	if err != nil {
-		server.SendESTErrorResult(ctx, err)
-		return
-	}
-	server.SendRESTSuccessResult(ctx, userInfo)
-}
+//// 批量获取用户信息 （GET)
+//func getUserInfoView (ctx iris.Context) {
+//	userId := strings.TrimSpace(ctx.URLParam("user_id"))
+//	if userId == "" {
+//		userId = server.GetUserIdFromRequest(ctx)
+//	}
+//
+//	userInfo, err := getUserInfo(userId)
+//	if err != nil {
+//		server.SendESTErrorResult(ctx, err)
+//		return
+//	}
+//	server.SendRESTSuccessResult(ctx, userInfo)
+//}
 
 // 设置用户信息 （POST)
-func setUserInfoView (ctx iris.Context) {
-	userId := getUserIdFromRequest(ctx)
-	if userId == "" {
-		server.SendESTErrorResult(ctx, errors.LoginSessionInvalid)
-		return
-	}
-	userInfo, err := getUserInfo(userId)
-	if err != nil {
-		server.SendESTErrorResult(ctx, err)
-		return
-	}
+func setUserInfoView(ctx iris.Context) {
+	//jwt := ctx.Values().Get("user_jwt").(*data.AccountJWT)
+	userInfo := ctx.Values().Get("user_info").(*data.AccountEntity)
 
 	// 昵称校验
 	nickName := strings.TrimSpace(ctx.PostValue("nick_name"))
@@ -124,7 +121,7 @@ func setUserInfoView (ctx iris.Context) {
 	userInfo.NickName = nickName
 
 	// 入库
-	err = server.UserDB.Set(constants.AccountIdDBPrefix + userId, utils.ObjectToJSONString(userInfo, false), 0).Err()
+	err := server.UserDB.Set(constants.AccountIdDBPrefix+userInfo.Id, utils.ObjectToJSONString(userInfo, false), 0).Err()
 	if err != nil {
 		server.SendESTErrorResult(ctx, errors.RedisConnectionError)
 		return

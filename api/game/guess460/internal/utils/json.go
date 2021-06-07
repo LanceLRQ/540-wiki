@@ -7,19 +7,24 @@ import (
 
 // ObjectToJSONString 对象转JSON字符串
 func ObjectToJSONString(obj interface{}, format bool) string {
+	return string(ObjectToJSONByte(obj, format))
+}
+
+// ObjectToJSONByte 对象转JSON字节
+func ObjectToJSONByte(obj interface{}, format bool) []byte {
 	b, err := json.Marshal(obj)
 	if err != nil {
-		return "{}"
+		return []byte("{}")
 	} else {
 		if format {
 			var out bytes.Buffer
 			err = json.Indent(&out, b, "", "    ")
 			if err != nil {
-				return "{}"
+				return[]byte("{}")
 			}
-			return out.String()
+			return out.Bytes()
 		}
-		return string(b)
+		return b
 	}
 }
 

@@ -22,6 +22,7 @@ func runHttpServer() error {
 	// and log the requests to the terminal.
 	app.Use(recover.New())
 	app.Use(logger.New())
+	//app.Use(server.NewGuess640Jwt())
 
 	views.RegisterRouter(app)
 

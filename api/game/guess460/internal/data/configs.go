@@ -7,6 +7,8 @@ type ServerConfiguration struct {
 		Listen string `yaml:"listen" json:"listen"`
 		// 监听端口
 		Port int `yaml:"port" json:"port,int"`
+		// 会话安全salt
+		SessionSalt string `yaml:"session_salt" json:"session_salt"`
 	} `yaml:"server" json:"server"`
 
 	// REDIS CLI配置
