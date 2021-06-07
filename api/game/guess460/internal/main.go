@@ -9,7 +9,7 @@ import (
 	"guess460/internal/views"
 )
 
-func RunHttpServer() error {
+func runHttpServer() error {
 	app := iris.New()
 
 	if server.Config.DebugMode {
@@ -31,6 +31,18 @@ func RunHttpServer() error {
 	return err
 }
 
-func ParseListenAddress(address string) {
+func parseListenAddress(address string) {
 
+}
+
+func RunServer (configFile string, address string) error {
+	// Load
+	err := server.LoadConfiguration(configFile)
+	if err != nil { return err }
+	parseListenAddress(address)
+	go server.RedisClientWatcher()
+	// Run server
+	err = runHttpServer()
+	if err != nil { return err }
+	return nil
 }

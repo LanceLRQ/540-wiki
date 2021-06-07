@@ -13,8 +13,6 @@ var RoomDB *redis.Client
 
 // NewRedisClient 初始化redis链接池
 func NewRedisClient(db int) (*redis.Client, error) {
-	fmt.Println(db)
-	fmt.Println(Config.Redis.Host, Config.Redis.Password)
 	client := redis.NewClient(&redis.Options{
 		Addr:        fmt.Sprintf("%s:%d", Config.Redis.Host, Config.Redis.Port), // Redis地址
 		Password:    Config.Redis.Password,                                      // Redis账号
