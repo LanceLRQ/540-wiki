@@ -21,8 +21,11 @@ export const SketchingBoard = (props) => {
 
   useEffect(() => {
     if (canvasRef.current) {
-      gameClient = new GameClient('ws://localhost:8460/api/game/room/1');
-      // window.test = gameClient.ws;
+      gameClient = new GameClient();
+      gameClient.Connect('ws://localhost:8460/api/game').then(res => {
+
+      });
+      window.game = gameClient;
 
       drawBoard = new DrawBoard(canvasRef.current, pencilRef.current);
       drawBoard.onChange = (msg) => {

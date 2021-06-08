@@ -6,8 +6,5 @@ import (
 )
 
 func RegisterRoom (app iris.Party) {
-	app.Get("/room/{room_id}", websocket.Handler(newRoomWsView()))
-	app.Get("/room2", func(context iris.Context) {
-		context.HTML("AAA")
-	})
+	app.Get("/", websocket.Handler(newGameWebsocketView()))
 }
