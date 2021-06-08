@@ -19,8 +19,8 @@ func newGameWebsocketView() *neffos.Server {
 				body := string(msg.Body)
 				fmt.Println("receive:"  + body + "; name space:" + msg.Namespace + ";room: " + msg.Room)
 				if !c.Conn.IsClient() {
-					//c.Conn.Server().Broadcast(c, msg)
-					c.Room("123").NSConn.Conn.Server().Broadcast(c, msg)
+					c.Conn.Server().Broadcast(c, msg)
+					//c.Room("123").NSConn.Conn.Server().Broadcast(c, msg)
 				}
 				return nil
 			},

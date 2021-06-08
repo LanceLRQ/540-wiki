@@ -10,6 +10,6 @@ func RegisterRouter(app *iris.Application) {
 	app.Get("/", func (ctx iris.Context) {
 		_, _ = ctx.HTML("Hello world")
 	})
-	account.RegisterAccount(app.Party("/api/account"))
-	game.RegisterRoom(app.Party("/api/game"))
+	account.RegisterAccount(app.Party("/api/game/guess460/account"))
+	game.RegisterRoom(app.Party("/api/game/guess460/game"))
 }

@@ -1,4 +1,12 @@
-.app-draw-something {
+.app-guess460-login {
+  width: $width-16;
+  margin: $width-8 auto;
+  h1 {
+    text-align: center;
+    margin: $width-8 auto;
+  }
+}
+.app-guess460-game {
   display: flex;
   flex-direction: row;
   width: 1280px;

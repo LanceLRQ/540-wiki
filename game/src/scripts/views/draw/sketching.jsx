@@ -5,7 +5,7 @@ import {
   Button, Row, Col, Slider, Space
 } from 'antd';
 import { UndoOutlined, DeleteOutlined } from '@ant-design/icons';
-import { DrawBoard } from './utils';
+import { DrawBoard } from './draw';
 import GameClient from './game';
 
 let drawBoard = null;
@@ -21,11 +21,11 @@ export const SketchingBoard = (props) => {
 
   useEffect(() => {
     if (canvasRef.current) {
-      gameClient = new GameClient();
-      gameClient.Connect('ws://localhost:8460/api/game').then(res => {
-
-      });
-      window.game = gameClient;
+      // gameClient = new GameClient();
+      // gameClient.Connect('ws://localhost:8460/api/game').then(res => {
+      //
+      // });
+      // window.game = gameClient;
 
       drawBoard = new DrawBoard(canvasRef.current, pencilRef.current);
       drawBoard.onChange = (msg) => {
