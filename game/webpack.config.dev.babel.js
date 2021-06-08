@@ -11,7 +11,7 @@ module.exports = require('./public/webpack/development.js').buildDevelopmentWebp
   }),
   new FriendlyErrorsWebpackPlugin({
     compilationSuccessInfo: {
-      messages: ['Your application is running here: http://localhost:3000'],
+      messages: ['Your application is running here: http://localhost:5400'],
     },
     clearConsole: false,
   }),

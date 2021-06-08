@@ -5,10 +5,11 @@ import {
   Button, Row, Col, Slider, Space
 } from 'antd';
 import { UndoOutlined, DeleteOutlined } from '@ant-design/icons';
-
 import { DrawBoard } from './utils';
+import GameClient from './game';
 
 let drawBoard = null;
+let gameClient = null;
 
 export const SketchingBoard = (props) => {
   const { width, height, targetImage } = props;
@@ -20,6 +21,9 @@ export const SketchingBoard = (props) => {
 
   useEffect(() => {
     if (canvasRef.current) {
+      gameClient = new GameClient('ws://localhost:8460/api/game/room/1');
+      // window.test = gameClient.ws;
+
       drawBoard = new DrawBoard(canvasRef.current, pencilRef.current);
       drawBoard.onChange = (msg) => {
         console.log(JSON.stringify(msg));

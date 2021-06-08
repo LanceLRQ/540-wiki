@@ -50,15 +50,20 @@ export const buildWebpackDevServer = (host='0.0.0.0', port=3000) => {
       disableHostCheck: true,
       // 转发代理（可以配置对应规则，转发到对应地址去，否则将由devServer处理）
       proxy: {
-        // '/api': {
-        //   target: 'https://api.abc.com',
-        //   changeOrigin: true,
-        //   secure: false,
-        //   logLevel: 'info',
-        //   pathRewrite: {'^/api': `${apiBase}`}
-        // },
+        '/api': {
+          target: 'http://localhost:8460',
+          changeOrigin: true,
+          secure: false,
+          logLevel: 'debug',
+          ws: true,
+          // 错误的时候在控制台输出内容
+          onError(err) {
+            console.log('Suppressing WDS proxy upgrade error:', err);
+          },
+          pathRewrite: {'^/api': `http://localhost:8460/api`}
+        },
         // '/api/ws': {
-        //   target: 'wss://api.abc.com'
+        //   target: 'wss://api.abc.com',
         //   changeOrigin: true,
         //   ws: true,
         //   // 错误的时候在控制台输出内容
