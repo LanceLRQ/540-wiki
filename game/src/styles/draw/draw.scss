@@ -1,3 +1,9 @@
+.app-guess460-loading {
+  width: $width-16;
+  margin: $width-8 auto;
+  text-align: center;
+}
+
 .app-guess460-login {
   width: $width-16;
   margin: $width-8 auto;
@@ -5,7 +11,29 @@
     text-align: center;
     margin: $width-8 auto;
   }
+  .user-avatar {
+    margin: $width-8 auto;
+    width: $width-11;
+    height: $width-11;
+    .ant-avatar {
+      border: 1px solid $grey-7;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, .25);
+      background: white;
+      cursor: pointer;
+    }
+  }
 }
+.app-guess460-room {
+  width: $width-16;
+  margin: $width-8 auto;
+
+  h1 {
+    text-align: center;
+    margin: $width-8 auto;
+  }
+}
+
 .app-guess460-game {
   display: flex;
   flex-direction: row;
@@ -33,6 +61,19 @@
       padding: $width-2;
       height: $width-16;
       flex: 0 0 $width-9;
+    }
+  }
+}
+
+.ant-modal {
+  .avatar-picker {
+    display: flex;
+    flex-wrap: wrap;
+    .avatar-picker-item {
+      margin: $width-1 1px;
+      width: 80px;
+      height: 80px;
+      cursor: pointer;
     }
   }
 }

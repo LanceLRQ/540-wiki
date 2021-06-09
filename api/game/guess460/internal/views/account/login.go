@@ -70,6 +70,11 @@ func doLoginView(ctx iris.Context) {
 			return
 		}
 
+		avatar := strings.TrimSpace(ctx.PostValue("avatar"))
+		if avatar != "" {
+			avatar = "p:fumei:07.png"
+		}
+
 		userInfo = &data.AccountEntity{
 			Id:           userId,
 			NickName:     nickName,
@@ -119,6 +124,11 @@ func setUserInfoView(ctx iris.Context) {
 	}
 
 	userInfo.NickName = nickName
+
+	avatar := strings.TrimSpace(ctx.PostValue("avatar"))
+	if avatar != "" {
+		userInfo.Avatar = avatar
+	}
 
 	// 入库
 	err := server.UserDB.Set(constants.AccountIdDBPrefix+userInfo.Id, utils.ObjectToJSONString(userInfo, false), 0).Err()

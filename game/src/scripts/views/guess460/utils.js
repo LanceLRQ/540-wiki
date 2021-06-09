@@ -5,23 +5,26 @@ const apiClient = createApiClient();
 
 const LoginCheck = async () => {
   try {
-    return await apiClient({
+    const resp = await apiClient({
       url: '/account/login',
     }).result;
+    return resp.data;
   } catch (e) {
     return null;
   }
 };
 
-const DoLogin = async (nickname) => {
+const DoLogin = async (data) => {
   try {
-    await apiClient({
+    const resp = await apiClient({
       method: 'post',
       url: '/account/login',
-      data: { nickname },
+      data,
     }).result;
+    return resp.data;
   } catch (e) {
     message.error(e.message);
+    return null;
   }
 };
 

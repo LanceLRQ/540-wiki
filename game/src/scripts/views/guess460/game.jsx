@@ -1,5 +1,5 @@
 import React from 'react';
-import { SketchingBoard } from '@/scripts/views/draw/sketching';
+import { SketchingBoard } from '@/scripts/views/guess460/sketching';
 import CatImg from '@/images/cat.jpg';
 import {
   Button, Col, Input, Row

@@ -1,4 +1,5 @@
 import { get  } from 'lodash';
+import qs from 'qs';
 import axios, { CancelToken } from 'axios';
 
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';
@@ -11,6 +12,18 @@ const HTTP_NOT_ALLOW = 400;
 const HTTP_FORBIDDEN = 403;
 const HTTP_METHOD_NOT_ALLOW = 405;
 const HTTP_REQUEST_TOO_LARGE = 413;
+
+const customAxios = axios.create({
+  timeout: 30000,
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  withCredentials: true,
+});
+
+customAxios.interceptors.request.use((config) => {
+  // eslint-disable-next-line no-param-reassign
+  config.data = qs.stringify(config.data);
+  return config;
+});
 
 export class ApiError extends Error {
   constructor(reason) {
@@ -50,32 +63,8 @@ const defaultOptions = {
   },
 };
 
-export const createApiClient = (appName = 'game', moduleName  = 'guess460') => {
-  const { API_HOST = '' } = process.env;
-  // 如果不设置baseURL，则自动mapping到默认的接口
-  console.log(API_HOST);
-  const baseURL = `${API_HOST}/${appName}/${moduleName}`;
-  return (options) => {
-    const {
-      ...requestOptions
-    } = {
-      ...defaultOptions,
-      ...options,
-    };
-    const source = CancelToken.source();
-    return {
-      result: axios({
-        baseURL,
-        cancelToken: source.token,
-        ...requestOptions,
-      }),
-      client: source,
-    };
-  };
-};
-
 // 添加响应拦截器
-axios.interceptors.response.use((response) => {
+customAxios.interceptors.response.use((response) => {
   return response;
 }, (error) => {
   // 对响应错误做点什么
@@ -120,3 +109,28 @@ axios.interceptors.response.use((response) => {
     }
   }
 });
+
+export const createApiClient = (appName = 'game', moduleName  = 'guess460') => {
+  const { API_HOST = '' } = process.env;
+  // 如果不设置baseURL，则自动mapping到默认的接口
+  console.log(API_HOST);
+  const baseURL = `${API_HOST}/${appName}/${moduleName}`;
+  return (options) => {
+    const {
+      ...requestOptions
+    } = {
+      ...defaultOptions,
+      ...options,
+    };
+    const source = CancelToken.source();
+    const instance = customAxios({
+      baseURL,
+      cancelToken: source.token,
+      ...requestOptions,
+    });
+    return {
+      result: instance,
+      client: source,
+    };
+  };
+};

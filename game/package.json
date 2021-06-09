@@ -110,6 +110,7 @@
     "neffos.js": "^0.1.25",
     "node-watch": "^0.6.4",
     "prop-types": "^15.7.2",
+    "qs": "^6.10.1",
     "react": "^16.13.1",
     "react-color": "^2.19.3",
     "react-dom": "^16.13.1",

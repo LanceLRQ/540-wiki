@@ -5,6 +5,8 @@ type AccountEntity struct {
 	Id string `json:"id"`
 	// 昵称
 	NickName string `json:"nickname"`
+	// 头像（默认值：p:fumei:07.png）
+	Avatar string `json:"avatar"`
 	// 分数（预留）
 	Score int `json:"score"`
 	// 注册时间（发号）

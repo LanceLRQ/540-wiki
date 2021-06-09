@@ -1,6 +1,6 @@
 import { IndexApp } from '../views/root';
 import { HomePage } from '../views/home';
-import { DrawSomethingIndex } from '../views/draw/index';
+import { DrawSomethingIndex } from '../views/guess460/index';
 
 export const routes = [
   {
@@ -12,7 +12,7 @@ export const routes = [
         component: HomePage,
       },
       {
-        path: '/draw',
+        path: '/guess460',
         component: DrawSomethingIndex,
       }
     ],
