@@ -31,7 +31,7 @@ export const DrawSomethingIndex = () => {
     if (roomInfo) {
       return <GamePanel />;
     }
-    return <RoomView />;
+    return <RoomView userInfo={userInfo} />;
   }
   return <LoginPanel onLogined={checkLogin} />;
 };

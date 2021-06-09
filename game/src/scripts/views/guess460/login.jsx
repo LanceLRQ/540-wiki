@@ -60,6 +60,7 @@ export const LoginPanel = (props) => {
         visible={avatarPickerVisible}
         footer={false}
         width={540}
+        onCancel={() => setAvatarPickerVisible(false)}
       >
         <Tabs activeKey={avatarType} onChange={(k) => setAvatarType(k)}>
           <Tabs.TabPane tab="福美酱" key="fumei">
@@ -74,7 +75,6 @@ export const LoginPanel = (props) => {
             </div>
           </Tabs.TabPane>
         </Tabs>
-
       </Modal>
     </div>
   </div>;

@@ -71,7 +71,7 @@ func doLoginView(ctx iris.Context) {
 		}
 
 		avatar := strings.TrimSpace(ctx.PostValue("avatar"))
-		if avatar != "" {
+		if avatar == "" {
 			avatar = "p:fumei:07.png"
 		}
 
@@ -79,6 +79,7 @@ func doLoginView(ctx iris.Context) {
 			Id:           userId,
 			NickName:     nickName,
 			RegisterTime: time.Now().Unix(),
+			Avatar:       avatar,
 		}
 		// 入库
 		_, err := server.UserDB.Set(constants.AccountIdDBPrefix+userId, utils.ObjectToJSONString(userInfo, false), 0).Result()
