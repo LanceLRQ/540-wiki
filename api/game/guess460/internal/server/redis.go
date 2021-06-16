@@ -7,8 +7,7 @@ import (
 	"time"
 )
 
-var UserDB *redis.Client
-var RoomDB *redis.Client
+var SystemDB *redis.Client
 //RedisClient := NewRedisClient(Config.)
 
 // NewRedisClient 初始化redis链接池
@@ -33,16 +32,16 @@ func NewRedisClient(db int) (*redis.Client, error) {
 func RedisClientWatcher () {
 	var err error
 	for {
-		UserDB, err = NewRedisClient(Config.Redis.UserDB)
+		SystemDB, err = NewRedisClient(Config.Redis.SystemDB)
 		if err != nil {
 			log.Printf("[Redis] %s\n", err.Error())
 			time.Sleep(3 * time.Second)  // wait 3 seconds.
 			continue
 		}
-		fmt.Println("[Redis] Connected.")
+		fmt.Printf("[Redis] DB %d Connected.\n", Config.Redis.SystemDB)
 		for {
 			time.Sleep(10 * time.Second)  // ping pre 10 seconds.
-			err = UserDB.Ping().Err()
+			err = SystemDB.Ping().Err()
 			if err != nil {
 				log.Printf("[Redis] %s\n", err.Error())
 				time.Sleep(3 * time.Second)  // wait 3 seconds.

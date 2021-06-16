@@ -82,7 +82,7 @@ func doLoginView(ctx iris.Context) {
 			Avatar:       avatar,
 		}
 		// 入库
-		_, err := server.UserDB.Set(constants.AccountIdDBPrefix+userId, utils.ObjectToJSONString(userInfo, false), 0).Result()
+		_, err := server.SystemDB.Set(constants.AccountIdDBPrefix+userId, utils.ObjectToJSONString(userInfo, false), 0).Result()
 		if err != nil {
 			server.SendESTErrorResult(ctx, errors.RedisConnectionError)
 			return
@@ -132,7 +132,7 @@ func setUserInfoView(ctx iris.Context) {
 	}
 
 	// 入库
-	err := server.UserDB.Set(constants.AccountIdDBPrefix+userInfo.Id, utils.ObjectToJSONString(userInfo, false), 0).Err()
+	err := server.SystemDB.Set(constants.AccountIdDBPrefix+userInfo.Id, utils.ObjectToJSONString(userInfo, false), 0).Err()
 	if err != nil {
 		server.SendESTErrorResult(ctx, errors.RedisConnectionError)
 		return

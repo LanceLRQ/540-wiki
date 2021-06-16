@@ -62,7 +62,7 @@ func GetUserInfo(userId string) (*data.AccountEntity, error) {
 	var userInfo data.AccountEntity
 
 	// read from redis
-	userInfoJSON, err := UserDB.Get(constants.AccountIdDBPrefix + userId).Result()
+	userInfoJSON, err := SystemDB.Get(constants.AccountIdDBPrefix + userId).Result()
 	if err == redis.Nil {
 		return nil, errors.UserInfoNotExists
 	} else if err != nil {
