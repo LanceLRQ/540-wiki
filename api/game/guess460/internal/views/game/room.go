@@ -235,6 +235,11 @@ func kickPeople(ctx iris.Context) {
 	}{UserId: targetUid}, fmt.Sprintf("玩家已被踢出"))
 }
 
+// 换座位
+func changeSeat(ctx iris.Context) {
+
+}
+
 // 获取房间信息
 func getRoomInfo(ctx iris.Context) {
 
@@ -242,11 +247,6 @@ func getRoomInfo(ctx iris.Context) {
 
 // 获取成员在线状态
 func checkOnlineStatus(ctx iris.Context) {
-
-}
-
-// 换座位
-func setSeatOrder(ctx iris.Context) {
 
 }
 
