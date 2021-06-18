@@ -9,4 +9,7 @@ var (
 	RoomInfoNotExists = NewGuess460CustomError(3003, "房间信息不存在")
 	JoinRoomError = NewGuess460CustomError(3004, "加入房间失败")
 	RoomMemberFullError = NewGuess460CustomError(3005, "房间人数已满，不能再进入")
+	NotRoomCreatorError = NewGuess460CustomError(3006, "非房间创建者不能操作")
+	SeatInfoNotExistsError = NewGuess460CustomError(3007, "玩家座位信息不存在")
+	RoomOperateError = NewGuess460CustomError(3999, "操作失败，请重试")
 )
